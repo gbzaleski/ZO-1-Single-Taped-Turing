@@ -1,5 +1,5 @@
  
-# We provide the following files:
+We provide the following files:
 turing_machine.h - types that can be used for representing a Turing machine
 turing_machine.cpp - functions reading and writing a Turing machine from/to a file
 tm_interpreter.cpp - simulator of a Turing machine
