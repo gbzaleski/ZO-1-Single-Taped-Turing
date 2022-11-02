@@ -1,0 +1,12 @@
+ 
+# We provide the following files:
+turing_machine.h - types that can be used for representing a Turing machine
+turing_machine.cpp - functions reading and writing a Turing machine from/to a file
+tm_interpreter.cpp - simulator of a Turing machine
+palindromes.tm - example of a two-tape Turing machine
+
+Your solution will be graded automatically, so it should strictly follow the proposed format of Turing machines
+(explained in the files palindromes.tm and turing_machine.h). Moreover, your solution should not only be correct, but also work in a reasonable time, produce Turing machines working in reasonable time, etc.
+It should be easy to compile your program, preferably using the make command.
+
+Recommended approach: use the files turing_machine.{h|cpp} for reading/writing/representing Turing machines, and only add a part that translates a two-tape machine into a one-tape machine. Other approaches are also allowed, but not recommended; in particular you may modify the provided files if you wish
