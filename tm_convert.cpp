@@ -402,10 +402,26 @@ TuringMachine tm_convert(const TuringMachine original_tm)
     const vector<string> EMPTY_CELLS = {BLANK, BLANK};
     if (original_tm.transitions.find(make_pair(INITIAL_STATE, EMPTY_CELLS)) != original_tm.transitions.end())
     {
-        if (get<0>(original_tm.transitions.at(make_pair(INITIAL_STATE, EMPTY_CELLS))) == ACCEPTING_STATE)
-            append_transitions(ottm_transitions, INITIAL_STATE, BLANK,
-                ACCEPTING_STATE, BLANK + SIGN + BLANK, string{HEAD_STAY});
+        auto transitions_corner_state = INITIAL_STATE + SIGN + INITIAL_STATE + SIGN + BLANK + SIGN + BLANK;
+        append_transitions(ottm_transitions, INITIAL_STATE, BLANK,
+            transitions_corner_state, GUARD, string{HEAD_RIGHT});
+
+        auto new_state = PHASE1_FIND_SECOND + SIGN + INITIAL_STATE + SIGN + BLANK + SIGN + BLANK;
+            append_transitions(ottm_transitions, transitions_corner_state, BLANK,
+                new_state, HEAD + BLANK + SIGN + HEAD + BLANK, string{HEAD_STAY});
     }
+
+    // to ogarnac
+    // for (auto &[k, v] : original_tm.transitions)
+    // {
+    //     if (k.second == EMPTY_CELLS)
+    //     {
+
+    //      cout << k.first << ", [" << k.second[0] << ", " << k.second[1] << "] ---> " 
+    //         << get<0>(v) << ", [" << (get<1>(v))[0] << ", " << (get<1>(v))[1]  << "], " << get<2>(v) << endl;
+
+    //     }
+    // }
 
     return TuringMachine(1, original_tm.input_alphabet, ottm_transitions);
 }

@@ -6,6 +6,4 @@
 
 TuringMachine tm_convert(TuringMachine original_tm);
 
-void print_tapes(TuringMachine one_taped_tm);
-
 #endif
