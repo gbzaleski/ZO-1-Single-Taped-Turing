@@ -144,12 +144,6 @@ int main(int argc, char* argv[]) {
     else 
     {
         TuringMachine one_taped_tm = tm_convert(tm);
-        ofstream one_taped_tm_file;
-        one_taped_tm_file.open("one_taped_translation_tm");
-        one_taped_tm_file << one_taped_tm;
-        one_taped_tm_file.close();
-
-        cout << filename << endl;
         cout << "Constructed, one-taped turing machine: \n";
         run(one_taped_tm, input);
     }

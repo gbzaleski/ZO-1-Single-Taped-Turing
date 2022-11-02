@@ -87,7 +87,7 @@ static bool is_valid_char(int ch)
         || ch == '_' || ch == '-'
         || ch == '<' || ch == '>' // Sideway movements
         || ch == '$'    // Tape start
-        || ch == '+' || ch == '~';   // Extra sign for non colliding alphabet (assumed original machine does not use it)
+        || ch == '~';   // Head marking
 }
 
 static bool is_direction(int ch) 

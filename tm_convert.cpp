@@ -11,7 +11,7 @@ using namespace std;
 // Solution uses special characters
 //  $ for seperation inside states and cells
 //  ~ for machine head marking in cell
-// < and > in state for head movement indication
+//  < and > in state for head movement indication
 // which may require modification of is_valid_char() function from the module.
 
 // Transition signature
@@ -410,18 +410,6 @@ TuringMachine tm_convert(const TuringMachine original_tm)
             append_transitions(ottm_transitions, transitions_corner_state, BLANK,
                 new_state, HEAD + BLANK + SIGN + HEAD + BLANK, string{HEAD_STAY});
     }
-
-    // to ogarnac
-    // for (auto &[k, v] : original_tm.transitions)
-    // {
-    //     if (k.second == EMPTY_CELLS)
-    //     {
-
-    //      cout << k.first << ", [" << k.second[0] << ", " << k.second[1] << "] ---> " 
-    //         << get<0>(v) << ", [" << (get<1>(v))[0] << ", " << (get<1>(v))[1]  << "], " << get<2>(v) << endl;
-
-    //     }
-    // }
 
     return TuringMachine(1, original_tm.input_alphabet, ottm_transitions);
 }

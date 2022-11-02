@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
     }
 
     string filename = argv[1];
-    string outputname = argc > 2 ? argv[2] : "one_taped_translation.tm";
+    string outputname = argc > 2 ? argv[2] : "single_taped_translation.tm";
 
     FILE *f = fopen(filename.c_str(), "r");
     if (!f) 
