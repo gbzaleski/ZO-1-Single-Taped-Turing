@@ -83,24 +83,27 @@ inline void append_transitions(transitions_t &transitions,
 // Retrieves letter from the new state
 string get_letter(const string &state_value)
 {
-    const char SIGN = '$';
     int i = 0;
     string letter = "";
     // Phase
-    while (state_value[i] != SIGN)
+    while (state_value[i] != '(' || state_value[i+1] != '-' || state_value[i+2] != ')')
     {
         i++;
     }
+    i++;
+    i++;
     i++;
 
     // State
-    while (state_value[i] != SIGN)
+    while (state_value[i] != '(' || state_value[i+1] != '-' || state_value[i+2] != ')')
     {
         i++;
     }
     i++;
+    i++;
+    i++;
 
-    while (state_value[i] != SIGN)
+    while (state_value[i] != '(' || state_value[i+1] != '-' || state_value[i+2] != ')')
     {
         letter += state_value[i++];
     }
@@ -111,23 +114,42 @@ string get_letter(const string &state_value)
 // Retrieves the original state from the new state
 string get_state(const string &state_value)
 {
-    const char SIGN = '$';
     int i = 0;
     string state = "";
     // Phase
-    while (state_value[i] != SIGN)
+    while (state_value[i] != '(' || state_value[i+1] != '-' || state_value[i+2] != ')')
     {
         i++;
     }
     i++;
+    i++;
+    i++;
 
     // State
-    while (state_value[i] != SIGN)
+    while (state_value[i] != '(' || state_value[i+1] != '-' || state_value[i+2] != ')')
     {
         state += state_value[i++];
     }
 
     return state;
+}
+
+// For saving direction in the state
+inline char direction_from_chr(char c)
+{
+    if (c == 'L')
+        return '<';
+    if (c == 'R')
+        return '>';
+    return c;
+}
+inline char direction_to_chr(char c)
+{
+    if (c == '<')
+        return 'L';
+    if (c == '>')
+        return 'R';
+    return c;
 }
 
 // Converts two-taped Turing Machine to single-taped Turing Machine
@@ -139,9 +161,9 @@ TuringMachine tm_convert(const TuringMachine original_tm)
         exit(1);
     }
 
-    const string SIGN = "$";
+    const string SIGN = "(-)";
     const string GUARD = SIGN + SIGN;
-    const string HEAD = "~";
+    const string HEAD = "v";
 
     auto original_tm_work_alphabet_with_blank = original_tm.working_alphabet();
     original_tm_work_alphabet_with_blank.push_back(BLANK);
@@ -188,7 +210,7 @@ TuringMachine tm_convert(const TuringMachine original_tm)
         // Phase $ State Before $ Letter at head 1 $ Direction (null) 
         auto state_before = PHASE1_FIND_SECOND + SIGN + k.first + SIGN + k.second[0] + SIGN + BLANK;
         // Phase $ State Now $ New letter for head 1 $ Direction for 1
-        auto state_after = PHASE1_SET_SECOND_MARK + SIGN + get<0>(v) + SIGN + get<1>(v)[0] + SIGN + get<2>(v)[0];
+        auto state_after = PHASE1_SET_SECOND_MARK + SIGN + get<0>(v) + SIGN + get<1>(v)[0] + SIGN + direction_to_chr(get<2>(v)[0]);
 
         for (auto letter_on_first : original_tm_work_alphabet_with_blank)
         {
@@ -282,7 +304,7 @@ TuringMachine tm_convert(const TuringMachine original_tm)
 
                     // Sees head (at first) -> next phase (overwrite letter)
                     state_after = wrap(string{PHASE2_SET_FIRST_MARK} + SIGN + get_state(current_state) + SIGN + BLANK + SIGN + BLANK);
-                    char new_direction = current_state[current_state.size() - 2];
+                    char new_direction = direction_from_chr(current_state[current_state.size() - 2]);
                     string new_letter = get_letter(current_state) + SIGN + letter_on_second;
                     append_transitions(ottm_transitions, current_state, HEAD + cell_at_head,
                         state_after, new_letter, string{new_direction});

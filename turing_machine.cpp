@@ -84,10 +84,7 @@ static bool is_valid_char(int ch)
     return (ch >= 'a' && ch <= 'z')
         || (ch >= 'A' && ch <= 'Z')
         || (ch >= '0' && ch <= '9')
-        || ch == '_' || ch == '-'
-        || ch == '<' || ch == '>' // Sideway movements
-        || ch == '$'    // Tape start
-        || ch == '~';   // Head marking
+        || ch == '_' || ch == '-';
 }
 
 static bool is_direction(int ch) 
