@@ -62,6 +62,11 @@ inline void append_transitions(transitions_t &transitions,
     const string &from_state, const string &from_letter_at_head, 
     string new_state, const string &new_letter_at_head, const string &head_direction)
 {
+    const string SIGN = "(-)";
+    // Accept state concludes programme.
+    if (new_state != ACCEPTING_STATE && from_state.find(SIGN + ACCEPTING_STATE + SIGN) != std::string::npos)
+        return;
+
     pair<std::string, std::vector<std::string>> key = make_pair(wrap(from_state), std::vector<std::string>{wrap(from_letter_at_head)});
     tuple<std::string, std::vector<std::string>, std::string> value = make_tuple(wrap(new_state), std::vector<std::string>{wrap(new_letter_at_head)}, head_direction);
 
@@ -424,26 +429,27 @@ TuringMachine tm_convert(const TuringMachine original_tm)
     // Accept translation
     for (auto &[k, v] : ottm_transitions)
     {
-        auto current_state = k.first;
+        auto current_state = get<0>(v);
         // Reaching accepting state concludes programme - if head does not fall from the tape.
-        if (current_state != ACCEPTING_STATE && current_state.find(ACCEPTING_STATE) != std::string::npos)
+        if (current_state != ACCEPTING_STATE && current_state.find(SIGN + ACCEPTING_STATE + SIGN) != std::string::npos)
         {
+            append_transitions(ottm_transitions, current_state, BLANK, ACCEPTING_STATE, BLANK, string{HEAD_STAY});
+            
             for (auto letter_on_first : original_tm_work_alphabet_with_blank)
             {
                 for (auto letter_on_second : original_tm_work_alphabet_with_blank)
                 {
-                    
                     auto cell_at_head = letter_on_first + SIGN + letter_on_second;
                     auto cell_at_head_second_head = letter_on_first + SIGN + HEAD + letter_on_second;
 
                     // Move to the accept state
                     append_transitions(ottm_transitions, current_state, cell_at_head,
                         ACCEPTING_STATE, cell_at_head, string{HEAD_STAY});
-                    append_transitions(ottm_transitions, current_state, cell_at_head,
+                    append_transitions(ottm_transitions, current_state, cell_at_head_second_head,
                         ACCEPTING_STATE, cell_at_head_second_head, string{HEAD_STAY});
-                    append_transitions(ottm_transitions, current_state, cell_at_head,
+                    append_transitions(ottm_transitions, current_state, HEAD + cell_at_head,
                         ACCEPTING_STATE, HEAD + cell_at_head, string{HEAD_STAY});
-                    append_transitions(ottm_transitions, current_state, cell_at_head,
+                    append_transitions(ottm_transitions, current_state, HEAD + cell_at_head_second_head,
                         ACCEPTING_STATE, HEAD + cell_at_head_second_head, string{HEAD_STAY});
                 }
             }
