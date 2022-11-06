@@ -8,12 +8,6 @@ using namespace std;
 // Complexity O(n) (for each step of original machine)
 // Alphabet size O(m^2) (for m size of original machine)
 
-// Solution uses special characters
-//  $ for seperation inside states and cells
-//  ~ for machine head marking in cell
-//  < and > in state for head movement indication
-// which may require modification of is_valid_char() function from the module.
-
 // Transition signature
 // typedef std::map<
 //         std::pair<std::string, std::vector<std::string>>, 
@@ -39,7 +33,7 @@ using namespace std;
 
 // New State = (Phase x Original_State x Alphabet x Direction)
 
-// Q' : (Current_phase x Old_state x Letter to/from head1 x Move for head1), [Letter at head2]
+// F' : (Current_phase x Old_state x Letter to/from head1 x Move for head1), [Letter at head2]
 //      ---> (New_phase x Next_old_state x Letter to/from head1 x move for head1), [New letter at head2], Move
 
 // Adds brackets if necessary
@@ -68,12 +62,6 @@ inline void append_transitions(transitions_t &transitions,
     const string &from_state, const string &from_letter_at_head, 
     string new_state, const string &new_letter_at_head, const string &head_direction)
 {
-    // Reaching accepting state concludes programme.
-    if (new_state.find(ACCEPTING_STATE) != std::string::npos)
-    {
-        new_state = ACCEPTING_STATE;
-    }
-
     pair<std::string, std::vector<std::string>> key = make_pair(wrap(from_state), std::vector<std::string>{wrap(from_letter_at_head)});
     tuple<std::string, std::vector<std::string>, std::string> value = make_tuple(wrap(new_state), std::vector<std::string>{wrap(new_letter_at_head)}, head_direction);
 
@@ -431,6 +419,35 @@ TuringMachine tm_convert(const TuringMachine original_tm)
         auto new_state = PHASE1_FIND_SECOND + SIGN + INITIAL_STATE + SIGN + BLANK + SIGN + BLANK;
             append_transitions(ottm_transitions, transitions_corner_state, BLANK,
                 new_state, HEAD + BLANK + SIGN + HEAD + BLANK, string{HEAD_STAY});
+    }
+
+    // Accept translation
+    for (auto &[k, v] : ottm_transitions)
+    {
+        auto current_state = k.first;
+        // Reaching accepting state concludes programme - if head does not fall from the tape.
+        if (current_state != ACCEPTING_STATE && current_state.find(ACCEPTING_STATE) != std::string::npos)
+        {
+            for (auto letter_on_first : original_tm_work_alphabet_with_blank)
+            {
+                for (auto letter_on_second : original_tm_work_alphabet_with_blank)
+                {
+                    
+                    auto cell_at_head = letter_on_first + SIGN + letter_on_second;
+                    auto cell_at_head_second_head = letter_on_first + SIGN + HEAD + letter_on_second;
+
+                    // Move to the accept state
+                    append_transitions(ottm_transitions, current_state, cell_at_head,
+                        ACCEPTING_STATE, cell_at_head, string{HEAD_STAY});
+                    append_transitions(ottm_transitions, current_state, cell_at_head,
+                        ACCEPTING_STATE, cell_at_head_second_head, string{HEAD_STAY});
+                    append_transitions(ottm_transitions, current_state, cell_at_head,
+                        ACCEPTING_STATE, HEAD + cell_at_head, string{HEAD_STAY});
+                    append_transitions(ottm_transitions, current_state, cell_at_head,
+                        ACCEPTING_STATE, HEAD + cell_at_head_second_head, string{HEAD_STAY});
+                }
+            }
+        }
     }
 
     return TuringMachine(1, original_tm.input_alphabet, ottm_transitions);
